@@ -6,6 +6,13 @@ SECRET_KEY = 'django-insecure-codementor-ai-dev-key-change-in-production-2026'
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.railway.app',
+    'http://*.railway.app',
+    'https://web-production-6dddc.up.railway.app',
+    'https://web-production-a676c.up.railway.app',
+]
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
