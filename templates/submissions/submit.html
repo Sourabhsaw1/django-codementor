@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block title %}Analyze Code - CodeMentor AI{% endblock %}
+{% block content %}
+<div class="container py-4 fade-in" style="max-width:900px">
+  <div class="mb-4">
+    <h2 style="font-weight:700">🔍 Analyze Your Code</h2>
+    <p style="color:var(--muted)">Paste your code below and get instant AI feedback on bugs, performance, security & best practices.</p>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="row g-3 mb-3">
+      <div class="col-md-6">
+        <label class="form-label">Title</label>
+        <input type="text" name="title" class="form-control" placeholder="e.g. Binary Search Function" maxlength="200">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Language</label>
+        <select name="language" class="form-select">
+          <option value="python">🐍 Python</option>
+          <option value="javascript">⚡ JavaScript</option>
+          <option value="java">☕ Java</option>
+          <option value="cpp">⚙️ C++</option>
+          <option value="go">🐹 Go</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Your Code</label>
+      <textarea name="code" id="code-editor" placeholder="# Paste your code here...
+def example():
+    pass" style="background:#0a0f1a;border:1px solid var(--border);border-radius:12px;color:#e2e8f0;padding:20px;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.7;min-height:350px;width:100%;resize:vertical" required></textarea>
+      <div class="d-flex justify-content-between mt-1">
+        <span style="color:var(--muted);font-size:0.8rem">Minimum 5 characters required</span>
+        <span style="color:var(--muted);font-size:0.8rem" id="charCount">0 characters</span>
+      </div>
+    </div>
+
+    <!-- Sample code buttons -->
+    <div class="mb-3">
+      <label class="form-label">Try Sample Code:</label>
+      <div class="d-flex gap-2 flex-wrap">
+        <button type="button" class="btn btn-outline-light btn-sm" onclick="loadSample('good')">✅ Good Code Example</button>
+        <button type="button" class="btn btn-outline-light btn-sm" onclick="loadSample('buggy')">🐛 Buggy Code Example</button>
+        <button type="button" class="btn btn-outline-light btn-sm" onclick="loadSample('security')">🔒 Security Issues Example</button>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-lg w-100">
+      <i class="fas fa-search me-2"></i>Analyze Code Now
+    </button>
+  </form>
+</div>
+
+<script>
+const editor = document.getElementById('code-editor');
+editor.addEventListener('input', () => {
+  document.getElementById('charCount').textContent = editor.value.length + ' characters';
+});
+
+const samples = {
+  good: `def binary_search(arr, target):
+    """
+    Search for target in sorted array using binary search.
+    Time complexity: O(log n)
+    """
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
+
+def calculate_stats(numbers):
+    """Calculate mean and standard deviation."""
+    if not numbers:
+        return None, None
+    mean = sum(numbers) / len(numbers)
+    variance = sum((x - mean) ** 2 for x in numbers) / len(numbers)
+    return mean, variance ** 0.5`,
+
+  buggy: `def get_average(data=[]):
+    total = 0
+    for i in range(len(data)):
+        total = total + data[i]
+    avg = total / len(data)
+    print("Average is: " + str(avg))
+    return avg
+
+def find_user(users, id):
+    for u in users:
+        if u["id"] == id:
+            return u
+    try:
+        result = process(u)
+    except:
+        pass
+
+x = 5
+y = 10
+z = x+y
+a = z*2
+b = a/x`,
+
+  security: `import sqlite3
+
+def login(username, password):
+    password = "admin123"  # hardcoded password!
+    conn = sqlite3.connect("users.db")
+    query = "SELECT * FROM users WHERE name='" + username + "'"
+    result = conn.execute(query)
+    
+def run_user_code(user_input):
+    eval(user_input)  # dangerous!
+    exec(user_input)  # also dangerous!
+    
+def get_data(user_id):
+    data = eval(user_id)
+    return data`
+};
+
+function loadSample(type) {
+  editor.value = samples[type];
+  document.getElementById('charCount').textContent = editor.value.length + ' characters';
+}
+</script>
+{% endblock %}

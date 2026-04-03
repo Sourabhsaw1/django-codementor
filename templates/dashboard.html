@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard - CodeMentor AI{% endblock %}
+{% block content %}
+<div class="container py-4 fade-in">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 style="font-weight:700">Welcome back, {{ user.username }}! 👋</h2>
+      <p style="color:var(--muted)">Here's your coding progress</p>
+    </div>
+    <a href="{% url 'submit_code' %}" class="btn btn-primary">
+      <i class="fas fa-code me-2"></i>Analyze New Code
+    </a>
+  </div>
+
+  <!-- STATS -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-value">{{ total_submissions }}</div>
+        <div class="stat-label">📝 Total Submissions</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-value">{{ avg_score|floatformat:1 }}</div>
+        <div class="stat-label">⭐ Avg Score</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-value">{{ total_points }}</div>
+        <div class="stat-label">🏆 Total Points</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-value">#{{ rank }}</div>
+        <div class="stat-label">🥇 Your Rank</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECENT SUBMISSIONS -->
+  <div class="card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 style="font-weight:700;margin:0">Recent Submissions</h5>
+      <a href="{% url 'submission_history' %}" style="color:var(--accent);font-size:0.9rem">View all →</a>
+    </div>
+    {% if recent_submissions %}
+    <div class="table-responsive">
+      <table class="table" style="color:var(--text)">
+        <thead style="color:var(--muted);border-color:var(--border)">
+          <tr>
+            <th>Title</th>
+            <th>Language</th>
+            <th>Score</th>
+            <th>Bugs</th>
+            <th>Points</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody style="border-color:var(--border)">
+          {% for sub in recent_submissions %}
+          <tr style="border-color:var(--border)">
+            <td style="font-weight:600">{{ sub.title }}</td>
+            <td><span class="badge-lang">{{ sub.language }}</span></td>
+            <td>
+              <span style="font-weight:700;color:{% if sub.score >= 80 %}var(--green){% elif sub.score >= 60 %}var(--yellow){% else %}var(--red){% endif %}">
+                {{ sub.score|floatformat:1 }}
+              </span>
+            </td>
+            <td>
+              {% if sub.bugs_found > 0 %}
+              <span style="color:var(--red)">🐛 {{ sub.bugs_found }}</span>
+              {% else %}
+              <span style="color:var(--green)">✅ 0</span>
+              {% endif %}
+            </td>
+            <td style="color:var(--accent);font-weight:600">+{{ sub.points_earned }}</td>
+            <td style="color:var(--muted);font-size:0.85rem">{{ sub.submitted_at|date:"M d" }}</td>
+            <td><a href="{% url 'submission_result' sub.pk %}" style="color:var(--accent);font-size:0.85rem">View →</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+      <div style="font-size:3rem;margin-bottom:16px">🚀</div>
+      <h5>No submissions yet!</h5>
+      <p style="color:var(--muted)">Submit your first code to get AI feedback.</p>
+      <a href="{% url 'submit_code' %}" class="btn btn-primary mt-2">Analyze Your Code</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

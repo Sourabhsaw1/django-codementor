@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Login - CodeMentor AI{% endblock %}
+{% block content %}
+<div class="container py-5 fade-in" style="max-width:440px">
+  <div class="text-center mb-4">
+    <div style="font-size:2.5rem;margin-bottom:8px">🤖</div>
+    <h2 style="font-weight:700">Welcome Back</h2>
+    <p style="color:var(--muted)">Login to continue improving your code</p>
+  </div>
+  <div class="card p-4">
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input type="text" name="username" class="form-control" placeholder="Enter username" required autofocus>
+      </div>
+      <div class="mb-4">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-100 btn-lg">
+        <i class="fas fa-sign-in-alt me-2"></i>Login
+      </button>
+    </form>
+    <div class="text-center mt-3">
+      <span style="color:var(--muted)">Don't have an account? </span>
+      <a href="{% url 'register' %}" style="color:var(--accent);font-weight:600">Sign up free</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CodeMentor AI{% endblock %}</title>
+    {% load static %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #070b14; --bg2: #0d1421; --card: #111827; --card2: #1a2332;
+            --border: #1e2d45; --accent: #6366f1; --accent2: #8b5cf6;
+            --green: #10b981; --yellow: #f59e0b; --red: #ef4444;
+            --text: #f1f5f9; --muted: #64748b;
+            --glow: 0 0 30px rgba(99,102,241,0.15);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:var(--bg); color:var(--text); font-family:'Space Grotesk',sans-serif; min-height:100vh; }
+        .mono { font-family:'JetBrains Mono',monospace; }
+        .navbar { background:rgba(7,11,20,0.95); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:12px 0; position:sticky; top:0; z-index:1000; }
+        .navbar-brand { font-weight:700; font-size:1.3rem; color:var(--text)!important; display:flex; align-items:center; gap:10px; }
+        .brand-icon { width:36px; height:36px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+        .nav-link { color:var(--muted)!important; font-weight:500; transition:color 0.2s; padding:6px 14px!important; border-radius:8px; }
+        .nav-link:hover { color:var(--text)!important; background:var(--card); }
+        .btn-nav { background:var(--accent); color:white!important; border-radius:8px; }
+        .btn-nav:hover { background:var(--accent2)!important; }
+        .card { background:var(--card); border:1px solid var(--border); border-radius:16px; }
+        .stat-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; text-align:center; transition:all 0.3s; }
+        .stat-card:hover { border-color:var(--accent); box-shadow:var(--glow); transform:translateY(-3px); }
+        .stat-value { font-size:2.2rem; font-weight:700; background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .stat-label { color:var(--muted); font-size:0.85rem; margin-top:4px; }
+        .btn-primary { background:linear-gradient(135deg,var(--accent),var(--accent2)); border:none; border-radius:10px; font-weight:600; padding:10px 24px; transition:all 0.2s; }
+        .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(99,102,241,0.4); background:linear-gradient(135deg,var(--accent),var(--accent2)); }
+        .btn-outline-light { border-color:var(--border); color:var(--text); border-radius:10px; font-weight:600; }
+        .btn-outline-light:hover { background:var(--card2); border-color:var(--accent); color:var(--text); }
+        .form-control,.form-select { background:var(--card2); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:12px 16px; }
+        .form-control:focus,.form-select:focus { background:var(--card2); border-color:var(--accent); color:var(--text); box-shadow:0 0 0 3px rgba(99,102,241,0.2); }
+        .form-label { color:var(--muted); font-weight:500; font-size:0.9rem; }
+        .progress { background:var(--bg2); border-radius:99px; height:8px; }
+        .progress-bar { border-radius:99px; }
+        .alert { border:none; border-radius:12px; border-left:4px solid; }
+        .alert-success { background:rgba(16,185,129,0.1); border-color:var(--green); color:#6ee7b7; }
+        .alert-danger,.alert-error { background:rgba(239,68,68,0.1); border-color:var(--red); color:#fca5a5; }
+        .alert-info { background:rgba(99,102,241,0.1); border-color:var(--accent); color:#a5b4fc; }
+        .alert-warning { background:rgba(245,158,11,0.1); border-color:var(--yellow); color:#fcd34d; }
+        .badge-lang { background:var(--card2); color:var(--accent); border:1px solid var(--accent); border-radius:6px; padding:3px 10px; font-size:0.75rem; font-family:'JetBrains Mono'; }
+        footer { background:var(--bg2); border-top:1px solid var(--border); padding:30px 0; margin-top:60px; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        .fade-in { animation:fadeIn 0.5s ease forwards; }
+        ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+        .dropdown-menu { background:var(--card); border-color:var(--border); }
+        .dropdown-item { color:var(--text); } .dropdown-item:hover { background:var(--card2); color:var(--text); }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'home' %}">
+      <div class="brand-icon">🤖</div> CodeMentor AI
+    </a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span style="color:var(--text)"><i class="fas fa-bars"></i></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-center gap-1">
+        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}"><i class="fas fa-home me-1"></i>Home</a></li>
+        {% if user.is_authenticated %}
+        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}"><i class="fas fa-chart-line me-1"></i>Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'submit_code' %}"><i class="fas fa-code me-1"></i>Analyze Code</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'leaderboard' %}"><i class="fas fa-trophy me-1"></i>Leaderboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'submission_history' %}"><i class="fas fa-history me-1"></i>History</a></li>
+        <li class="nav-item ms-2">
+          <div class="dropdown">
+            <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user me-1"></i>{{ user.username }}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user-edit me-2"></i>Profile</a></li>
+              <li><hr class="dropdown-divider" style="border-color:var(--border)"></li>
+              <li><a class="dropdown-item" href="{% url 'logout' %}" style="color:var(--red)"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+            </ul>
+          </div>
+        </li>
+        {% else %}
+        <li class="nav-item"><a class="nav-link" href="{% url 'leaderboard' %}"><i class="fas fa-trophy me-1"></i>Leaderboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+        <li class="nav-item ms-2"><a class="nav-link btn-nav px-4" href="{% url 'register' %}">Get Started Free</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container my-4">
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }} alert-dismissible fade show fade-in">
+    <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} me-2"></i>
+    {{ message }} <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %}
+</div>
+
+{% block content %}{% endblock %}
+
+<footer>
+  <div class="container text-center">
+    <p style="color:var(--muted)">
+      Built with ❤️ using Django &nbsp;|&nbsp; CodeMentor AI &copy; 2026 &nbsp;|&nbsp;
+      <a href="https://github.com/Sourabhsaw1/django-codementor" style="color:var(--accent)"><i class="fab fa-github me-1"></i>View on GitHub</a>
+    </p>
+  </div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

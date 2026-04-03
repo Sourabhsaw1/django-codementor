@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% block title %}CodeMentor AI - AI-Powered Code Review{% endblock %}
+{% block content %}
+<style>
+.hero { min-height: 85vh; display:flex; align-items:center; position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; width:600px; height:600px; background:radial-gradient(circle,rgba(99,102,241,0.15) 0%,transparent 70%); top:-100px; right:-100px; pointer-events:none; }
+.hero::after { content:''; position:absolute; width:400px; height:400px; background:radial-gradient(circle,rgba(139,92,246,0.1) 0%,transparent 70%); bottom:-50px; left:-50px; pointer-events:none; }
+.hero-title { font-size: clamp(2.5rem,6vw,4.5rem); font-weight:700; line-height:1.1; }
+.gradient-text { background:linear-gradient(135deg,#6366f1,#8b5cf6,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero-sub { color:var(--muted); font-size:1.15rem; max-width:520px; line-height:1.7; }
+.feature-card { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:32px; transition:all 0.3s; height:100%; }
+.feature-card:hover { border-color:var(--accent); box-shadow:var(--glow); transform:translateY(-5px); }
+.feature-icon { width:56px; height:56px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:26px; margin-bottom:16px; }
+.lang-pill { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:12px 20px; display:flex; align-items:center; gap:10px; font-weight:600; transition:all 0.2s; }
+.lang-pill:hover { border-color:var(--accent); background:var(--card); }
+.code-preview { background:#0a0f1a; border:1px solid var(--border); border-radius:16px; padding:24px; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.8; position:relative; }
+.code-preview::before { content:'analysis.py'; position:absolute; top:12px; right:16px; color:var(--muted); font-size:11px; }
+.kw { color:#8b5cf6; } .fn { color:#6366f1; } .str { color:#10b981; } .cm { color:#4b5563; } .num { color:#f59e0b; }
+.step-num { width:48px; height:48px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.2rem; flex-shrink:0; }
+</style>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6 fade-in">
+        <div class="d-flex align-items-center gap-2 mb-4">
+          <span style="background:rgba(99,102,241,0.15);color:var(--accent);padding:6px 14px;border-radius:99px;font-size:0.85rem;font-weight:600;border:1px solid rgba(99,102,241,0.3)">
+            🤖 AI-Powered Code Analysis
+          </span>
+        </div>
+        <h1 class="hero-title mb-4">
+          Make Your Code<br>
+          <span class="gradient-text">10x Better</span><br>
+          with AI
+        </h1>
+        <p class="hero-sub mb-5">
+          Submit your code and get instant AI feedback on bugs, performance, security, and best practices. Level up your skills with every submission.
+        </p>
+        <div class="d-flex gap-3 flex-wrap">
+          {% if user.is_authenticated %}
+          <a href="{% url 'submit_code' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-code me-2"></i>Analyze My Code
+          </a>
+          <a href="{% url 'dashboard' %}" class="btn btn-outline-light btn-lg">
+            <i class="fas fa-chart-line me-2"></i>Dashboard
+          </a>
+          {% else %}
+          <a href="{% url 'register' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-rocket me-2"></i>Start Free
+          </a>
+          <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">
+            <i class="fas fa-sign-in-alt me-2"></i>Login
+          </a>
+          {% endif %}
+        </div>
+        <div class="d-flex gap-4 mt-5">
+          <div><div class="stat-value" style="font-size:1.6rem">{{ stats.total_submissions }}</div><div class="stat-label">Code Reviews</div></div>
+          <div style="width:1px;background:var(--border)"></div>
+          <div><div class="stat-value" style="font-size:1.6rem">{{ stats.total_users }}</div><div class="stat-label">Developers</div></div>
+          <div style="width:1px;background:var(--border)"></div>
+          <div><div class="stat-value" style="font-size:1.6rem">{% if stats.avg_score %}{{ stats.avg_score|floatformat:0 }}%{% else %}--{% endif %}</div><div class="stat-label">Avg Score</div></div>
+        </div>
+      </div>
+      <div class="col-lg-6 fade-in" style="animation-delay:0.2s">
+        <div class="code-preview">
+<span class="cm"># Your code gets analyzed instantly</span>
+<br><span class="kw">def</span> <span class="fn">calculate_average</span>(numbers):
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm"># Bug detected on line 3!</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;total = <span class="num">0</span>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">for</span> n <span class="kw">in</span> numbers:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total = total + n
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> total / <span class="fn">len</span>(numbers)
+<br><br><span class="cm"># ✅ AI suggests: Use sum() for 40% speedup</span>
+<br><span class="cm"># ⚠️  Handle division by zero</span>
+<br><span class="cm"># 📝 Add docstring for clarity</span>
+        </div>
+        <div class="mt-3 p-3" style="background:var(--card);border:1px solid var(--border);border-radius:12px">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span style="color:var(--muted);font-size:0.85rem">Analysis Result</span>
+            <span style="color:var(--green);font-weight:700;font-size:1.1rem">72 / 100</span>
+          </div>
+          <div class="progress mb-1" style="height:6px"><div class="progress-bar" style="width:72%;background:linear-gradient(90deg,var(--accent),var(--accent2))"></div></div>
+          <div class="d-flex gap-3 mt-2" style="font-size:0.8rem;color:var(--muted)">
+            <span>🐛 2 bugs found</span><span>⚡ 1 perf issue</span><span>🔒 Secure</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 style="font-size:2.2rem;font-weight:700">What CodeMentor AI Does</h2>
+      <p style="color:var(--muted)">Everything you need to write better code</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(239,68,68,0.15)">🐛</div>
+          <h5 style="font-weight:700;margin-bottom:8px">Bug Detection</h5>
+          <p style="color:var(--muted);font-size:0.9rem">Finds critical, high, medium, and low severity bugs in your code instantly with fix suggestions.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(16,185,129,0.15)">⚡</div>
+          <h5 style="font-weight:700;margin-bottom:8px">Performance Analysis</h5>
+          <p style="color:var(--muted);font-size:0.9rem">Detects inefficiencies and suggests optimizations that can speed up your code by 30-50%.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(245,158,11,0.15)">🔒</div>
+          <h5 style="font-weight:700;margin-bottom:8px">Security Scanner</h5>
+          <p style="color:var(--muted);font-size:0.9rem">Finds security vulnerabilities like injection risks, hardcoded passwords, and unsafe functions.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(99,102,241,0.15)">📚</div>
+          <h5 style="font-weight:700;margin-bottom:8px">Best Practices</h5>
+          <p style="color:var(--muted);font-size:0.9rem">Checks PEP 8 compliance, naming conventions, docstrings, and coding standards.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LANGUAGES -->
+<section class="py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 style="font-size:2rem;font-weight:700">Supported Languages</h2>
+    </div>
+    <div class="d-flex flex-wrap justify-content-center gap-3">
+      <div class="lang-pill">🐍 Python</div>
+      <div class="lang-pill">⚡ JavaScript</div>
+      <div class="lang-pill">☕ Java</div>
+      <div class="lang-pill">⚙️ C++</div>
+      <div class="lang-pill">🐹 Go</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 style="font-size:2rem;font-weight:700">How It Works</h2>
+    </div>
+    <div class="row g-4">
+      {% for step in "123" %}{% endfor %}
+      <div class="col-md-4">
+        <div class="d-flex gap-3 align-items-start">
+          <div class="step-num">1</div>
+          <div><h6 style="font-weight:700">Paste Your Code</h6><p style="color:var(--muted);font-size:0.9rem">Paste any code snippet, select language, give it a title.</p></div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="d-flex gap-3 align-items-start">
+          <div class="step-num">2</div>
+          <div><h6 style="font-weight:700">AI Analyzes Instantly</h6><p style="color:var(--muted);font-size:0.9rem">Our engine checks for bugs, performance, security & best practices.</p></div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="d-flex gap-3 align-items-start">
+          <div class="step-num">3</div>
+          <div><h6 style="font-weight:700">Get Detailed Report</h6><p style="color:var(--muted);font-size:0.9rem">See your score, all issues, and exact fixes to improve your code.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+{% if not user.is_authenticated %}
+<section class="py-5">
+  <div class="container">
+    <div class="text-center p-5" style="background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(139,92,246,0.1));border:1px solid rgba(99,102,241,0.3);border-radius:24px">
+      <h2 style="font-size:2rem;font-weight:700;margin-bottom:12px">Ready to Write Better Code?</h2>
+      <p style="color:var(--muted);margin-bottom:28px">Join developers improving their code quality with AI feedback.</p>
+      <a href="{% url 'register' %}" class="btn btn-primary btn-lg">
+        <i class="fas fa-rocket me-2"></i>Start Free — No Credit Card
+      </a>
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

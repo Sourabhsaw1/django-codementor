@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Leaderboard - CodeMentor AI{% endblock %}
+{% block content %}
+<div class="container py-4 fade-in">
+  <div class="text-center mb-5">
+    <h2 style="font-weight:700;font-size:2.2rem">🏆 Leaderboard</h2>
+    <p style="color:var(--muted)">Top developers by points earned</p>
+  </div>
+
+  {% if user_entry %}
+  <div class="card p-3 mb-4" style="border-color:rgba(99,102,241,0.4);background:rgba(99,102,241,0.08)">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-3">
+        <span style="font-size:1.8rem">{{ user_entry.get_medal }}</span>
+        <div>
+          <div style="font-weight:700">Your Position</div>
+          <div style="color:var(--muted);font-size:0.85rem">Keep submitting to climb the ranks!</div>
+        </div>
+      </div>
+      <div class="text-end">
+        <div style="font-size:1.4rem;font-weight:700;color:var(--accent)">{{ user_entry.total_points }} pts</div>
+        <div style="color:var(--muted);font-size:0.85rem">{{ user_entry.submissions_count }} submissions</div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if entries %}
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table" style="color:var(--text)">
+        <thead style="color:var(--muted);border-color:var(--border)">
+          <tr>
+            <th class="ps-4">Rank</th>
+            <th>Developer</th>
+            <th>Points</th>
+            <th>Submissions</th>
+            <th>Avg Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in entries %}
+          <tr style="border-color:var(--border);{% if user.is_authenticated and entry.user == user %}background:rgba(99,102,241,0.06){% endif %}">
+            <td class="ps-4">
+              <span style="font-size:1.3rem">{{ entry.get_medal }}</span>
+            </td>
+            <td>
+              <div style="font-weight:600">
+                {{ entry.user.username }}
+                {% if user.is_authenticated and entry.user == user %}
+                <span style="color:var(--accent);font-size:0.75rem;margin-left:6px">(You)</span>
+                {% endif %}
+              </div>
+              {% if entry.user.github_url %}
+              <a href="{{ entry.user.github_url }}" target="_blank" style="color:var(--muted);font-size:0.8rem"><i class="fab fa-github me-1"></i>GitHub</a>
+              {% endif %}
+            </td>
+            <td><span style="color:var(--accent);font-weight:700;font-size:1.1rem">{{ entry.total_points }}</span></td>
+            <td style="color:var(--muted)">{{ entry.submissions_count }}</td>
+            <td>
+              <span style="font-weight:600;color:{% if entry.avg_score >= 80 %}var(--green){% elif entry.avg_score >= 60 %}var(--yellow){% else %}var(--red){% endif %}">
+                {{ entry.avg_score|floatformat:1 }}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <div style="font-size:4rem">🏆</div>
+    <h4 style="margin-top:16px">No entries yet!</h4>
+    <p style="color:var(--muted)">Be the first to submit code and claim #1 rank!</p>
+    {% if user.is_authenticated %}
+    <a href="{% url 'submit_code' %}" class="btn btn-primary mt-3">Submit Code Now</a>
+    {% else %}
+    <a href="{% url 'register' %}" class="btn btn-primary mt-3">Join & Compete</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
